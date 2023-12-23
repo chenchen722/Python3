@@ -72,6 +72,13 @@
 
 # 自定义元类
 # class Mytype(type):               #只有继承了type的类才能是元类
+#     def __new__(cls,*args,**kwargs):
+#         print(cls)
+#         print(args)
+#         print(kwargs)
+        
+#         return type.__new__(cls,*args,**kwargs)
+            
 #     def __init__(self,class_name,class_bases,class_dic):
 #         # print('Mytype.init')
 #         if '_' in class_name:
@@ -80,20 +87,84 @@
 #         if not class_dic.get('__doc__'):
 #             raise SyntaxError('定义类必须写注释')
         
-# # Human = Mytype(class_name,class_bases,class_dic)
-# # 1. 产生一个空对象Human
-# # 2. 调用Mytype的init方法
-# # 3. 返回初始化好的对象Human
+#         print(class_bases)
+#         print(self.__bases__)
+        
+    
+# print(type(Mytype))
+# Human = Mytype(class_name,class_bases,class_dic)
+# __call__
+    # 1. 调用了Mytype的__new__方法, 产生一个空对象Human
+    # 2. 调用Mytype的init方法
+    # 3. 返回初始化好的对象Human
+    
+    
+'''
 
-# class Human(object,metaclass=Mytype):# 给Human指定元类,metaclass默认等于的type,也就是默认用的内置的元类
-#     '''
+    对象()-->类内部的__call__
+    类()-->自定义元类的__call__
+    自定义元类()-->内置元类__call__
+
+'''
+
+# class Human(metaclass=Mytype):# 给Human指定元类,metaclass默认等于的type,也就是默认用的内置的元类
+#     '''                              # 如果想要继承其他的类,就写前面(父类),只要保证 metaclass=type 在最后就行
 #         文档注释
 #     '''
 
-#     def __init__(self,name,age):        #如果想要继承其他的类,就写前面(父类),只要保证 metaclass=type 在最后就行
+#     def __init__(self,name,age):
 #         self.name = name
 #         self.age = age
 
 #     def info(self):
 #         print('name:',self.name,'age:',self.age)
         
+        
+        
+# # __call__        
+# class Test:
+#     def __init__(self,name,age):
+#         self.name = name
+#         self.age = age
+        
+#     def __call__(self,*args,**kwargs):
+#         print('Test.__call')
+        
+# obj = Test('陈',18)
+# obj()
+
+
+
+# 自定义元类
+# class Mytype(type):               #只有继承了type的类才能是元类
+#     def __call__(self,*args,**kwargs):
+#          self.__new__
+#          self.__init__
+        
+#         # print(self)
+#         # print(args)
+#         # print(kwargs)
+#         # return 'ABC'
+        
+        
+# class Human(metaclass=Mytype):# 给Human指定元类,metaclass默认等于的type,也就是默认用的内置的元类
+    
+#     def __init__(self,name,age):
+#         self.name = name
+#         self.age = age
+
+#     def info(self):
+#         print('name:',self.name,'age:',self.age)
+        
+# obj = Human('陈',18)
+# # 触发Mytype的__call__方法
+# #   1 调用Human的__new__方法
+# #   2 调用Human的__init__方法
+# #   3 返回初始化好的对象
+# print(obj)
+
+
+
+# 属性查找
+# 通过对象   对象-->类-->父类-->object(并不会去元类里面找)
+# 通过累     类-->父类-->元类-->type(如果父类使用了自定义元类,那么他的子类也会继承那个元类)
